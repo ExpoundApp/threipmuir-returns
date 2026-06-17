@@ -1,0 +1,717 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#0d1a1d">
+<title>Threipmuir Returns</title>
+<style>
+  :root{
+    --bg:#0d1a1d;
+    --surface:#15282c;
+    --surface-2:#1d353a;
+    --line:#2b4a50;
+    --text:#e9f0f1;
+    --muted:#84a0a5;
+    --brown:#c4894a;
+    --rainbow:#d96a8f;
+    --blue:#5f93b5;
+    --good:#6fbf8b;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:radial-gradient(120% 80% at 50% -10%, #173034 0%, var(--bg) 60%);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh;
+    padding:env(safe-area-inset-top) 16px calc(env(safe-area-inset-bottom) + 24px);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:520px;margin:0 auto;}
+
+  header{padding:22px 4px 14px;}
+  .eyebrow{font-size:11px;letter-spacing:.28em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  h1{margin:4px 0 0;font-size:30px;line-height:1.05;font-weight:800;letter-spacing:-.01em;}
+  h1 span{color:var(--blue);}
+
+  .member{margin-top:14px;display:flex;align-items:center;gap:10px;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:10px 12px;}
+  .member input{flex:1;min-width:0;background:transparent;border:none;color:var(--text);
+    font-size:15px;font-family:inherit;padding:4px 2px;}
+  .member input::placeholder{color:var(--muted);}
+  .member input:focus{outline:none;}
+  .member .div{width:1px;align-self:stretch;background:var(--line);}
+
+  .monthnav{margin-top:16px;display:flex;align-items:center;justify-content:space-between;
+    background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px;}
+  .monthnav button{width:46px;height:46px;border-radius:11px;border:none;background:var(--surface-2);
+    color:var(--text);font-size:22px;cursor:pointer;display:grid;place-items:center;}
+  .monthnav button:active{background:var(--line);}
+  .monthnav .label{text-align:center;}
+  .monthnav .label .m{font-size:19px;font-weight:700;}
+  .monthnav .label .y{font-size:12px;color:var(--muted);letter-spacing:.12em;}
+
+  .sectionlab{margin:20px 4px 8px;font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--muted);font-weight:700;}
+
+  .cards{display:flex;flex-direction:column;gap:12px;}
+  .card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:16px;
+    border-left:5px solid var(--accent);}
+  .card .top{display:flex;align-items:center;gap:12px;}
+  .fish{width:40px;height:24px;flex:none;opacity:.95;color:var(--accent);}
+  .card .name{font-size:17px;font-weight:700;}
+  .card .sub{font-size:12px;color:var(--muted);margin-top:1px;}
+  .card .tally{margin-left:auto;font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;
+    letter-spacing:-.02em;line-height:1;}
+
+  .rows{margin-top:12px;display:flex;flex-direction:column;gap:8px;}
+  .row{display:grid;grid-template-columns:20px 1fr 92px 34px;align-items:center;gap:8px;}
+  .row .idx{font-size:13px;color:var(--muted);text-align:center;font-variant-numeric:tabular-nums;}
+  .row input{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;
+    color:var(--text);font-family:inherit;font-size:14px;padding:11px 10px;min-width:0;width:100%;}
+  .row input:focus{outline:none;border-color:var(--accent);}
+  .row input::placeholder{color:var(--muted);}
+  .row .del{height:38px;border-radius:10px;border:1px solid var(--line);background:transparent;
+    color:var(--muted);font-size:17px;cursor:pointer;display:grid;place-items:center;}
+  .row .del:active{background:var(--line);color:var(--text);}
+
+  .add{margin-top:12px;width:100%;height:50px;border-radius:13px;border:none;cursor:pointer;
+    background:var(--accent);color:#0d1a1d;font-size:15px;font-weight:800;font-family:inherit;}
+  .add:active{transform:scale(.99);filter:brightness(.95);}
+  .empty{margin-top:10px;font-size:13px;color:var(--muted);font-style:italic;}
+
+  /* Guest section */
+  .guest{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:4px 12px;}
+  .guestrow{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--surface-2);}
+  .guestrow:last-child{border-bottom:none;}
+  .guestrow .fish{color:var(--accent);width:34px;height:20px;}
+  .guestrow .gname{font-size:16px;font-weight:600;}
+  .guestrow .gsub{font-size:11px;color:var(--muted);margin-top:1px;}
+  .gstep{margin-left:auto;display:flex;align-items:center;gap:12px;}
+  .gstep button{width:40px;height:40px;border-radius:11px;border:1px solid var(--line);
+    background:var(--surface-2);color:var(--text);font-size:24px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;}
+  .gstep button:active{background:var(--line);}
+  .gstep .gc{min-width:28px;text-align:center;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums;}
+
+  .total{margin-top:18px;display:flex;align-items:center;justify-content:space-between;
+    padding:16px 18px;border-radius:16px;background:linear-gradient(180deg,var(--surface-2),var(--surface));
+    border:1px solid var(--line);}
+  .total .lab{font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);font-weight:700;}
+  .total .totbreak{font-size:13px;color:var(--muted);margin-top:4px;}
+  .total .totbreak b{color:var(--text);font-variant-numeric:tabular-nums;}
+  .total .num{font-size:34px;font-weight:800;font-variant-numeric:tabular-nums;}
+
+  .notes{margin-top:12px;width:100%;background:var(--surface);border:1px solid var(--line);
+    border-radius:14px;color:var(--text);font-family:inherit;font-size:15px;padding:12px 14px;
+    resize:vertical;min-height:54px;}
+  .notes:focus{outline:none;border-color:var(--blue);}
+  .notes::placeholder{color:var(--muted);}
+
+  /* Photos */
+  .photos{margin-top:6px;}
+  .uploadbtn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;height:50px;
+    border-radius:13px;border:1px dashed var(--line);background:var(--surface);color:var(--text);
+    font-size:15px;font-weight:700;font-family:inherit;cursor:pointer;}
+  .uploadbtn:active{background:var(--surface-2);}
+  .gallery{margin-top:12px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+  .thumb{position:relative;aspect-ratio:1/1;border-radius:12px;overflow:hidden;border:2px solid transparent;
+    cursor:pointer;background:var(--surface-2);}
+  .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .thumb .check{position:absolute;top:6px;left:6px;width:24px;height:24px;border-radius:50%;
+    background:rgba(13,26,29,.55);color:#fff;display:grid;place-items:center;font-size:14px;
+    opacity:0;transition:.15s;}
+  .thumb.sel{border-color:var(--good);}
+  .thumb.sel .check{opacity:1;background:var(--good);color:#06140c;}
+  .thumb .thumbdel{position:absolute;top:6px;right:6px;width:24px;height:24px;border-radius:50%;
+    border:none;background:rgba(13,26,29,.6);color:#fff;font-size:16px;line-height:1;cursor:pointer;
+    display:grid;place-items:center;}
+  .thumb .thumbdel:active{background:#000;}
+  .galhint{margin-top:8px;font-size:11px;color:var(--muted);line-height:1.5;}
+
+  .actions{margin-top:18px;display:flex;flex-direction:column;gap:10px;}
+  .actions .submit{width:100%;height:54px;border-radius:14px;font-size:15px;font-weight:800;
+    font-family:inherit;cursor:pointer;border:none;}
+  .actions .submit.primary{background:var(--good);color:#06140c;}
+  .actions .submit.images{background:var(--blue);color:#06151d;}
+  .actions .submit:active{filter:brightness(.92);}
+  .actions .reset{width:100%;height:46px;border-radius:14px;font-size:14px;font-weight:700;
+    font-family:inherit;cursor:pointer;border:1px solid var(--line);background:transparent;color:var(--muted);}
+  .actions .reset:active{background:var(--surface);}
+
+  details{margin-top:18px;border-top:1px solid var(--line);padding-top:14px;}
+  summary{list-style:none;cursor:pointer;font-size:13px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--muted);font-weight:700;}
+  summary::-webkit-details-marker{display:none;}
+  .seasonrow{display:flex;justify-content:space-between;padding:9px 2px;
+    border-bottom:1px solid var(--surface-2);font-size:14px;}
+  .seasonrow:last-child{border-bottom:none;}
+  .seasonrow .v{font-variant-numeric:tabular-nums;color:var(--muted);}
+  .seasonrow.grand{font-weight:800;color:var(--text);}
+  .seasonrow.grand .v{color:var(--text);}
+
+  footer{margin-top:24px;text-align:center;color:var(--muted);font-size:11px;line-height:1.6;}
+
+  .toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--text);color:#0d1a1d;padding:11px 18px;border-radius:99px;font-size:14px;
+    font-weight:700;opacity:0;pointer-events:none;transition:.25s;box-shadow:0 8px 30px rgba(0,0,0,.4);
+    max-width:90%;text-align:center;}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="eyebrow">Threipmuir Angling Club</div>
+    <h1>Catch <span>Returns</span></h1>
+    <div class="member">
+      <input id="memberName" type="text" placeholder="Your name" autocomplete="name">
+      <div class="div"></div>
+      <input id="memberNo" type="text" placeholder="Membership no.">
+    </div>
+  </header>
+
+  <div class="monthnav">
+    <button id="prevMonth" aria-label="Previous month">‹</button>
+    <div class="label"><div class="m" id="monthLabel">—</div><div class="y" id="yearLabel"></div></div>
+    <button id="nextMonth" aria-label="Next month">›</button>
+  </div>
+
+  <div class="sectionlab">Your catches</div>
+  <div class="cards" id="cards"></div>
+
+  <div class="sectionlab">Guest catches</div>
+  <div class="guest" id="guest"></div>
+
+  <div class="total">
+    <div>
+      <span class="lab">This month</span>
+      <div class="totbreak">You <b id="youTotal">0</b> &nbsp;·&nbsp; Guests <b id="guestTotal">0</b></div>
+    </div>
+    <span class="num" id="monthTotal">0</span>
+  </div>
+
+  <textarea class="notes" id="notes" placeholder="Notes for the return (water conditions, etc.) — optional"></textarea>
+
+  <div class="photos">
+    <div class="sectionlab">Catch photos</div>
+    <input id="fileInput" type="file" accept="image/*" multiple hidden>
+    <button class="uploadbtn" id="uploadBtn">＋ Add photos</button>
+    <div class="gallery" id="gallery"></div>
+    <div class="galhint">Tap a photo to select / deselect it for the email. Selected photos have a green tick.</div>
+  </div>
+
+  <div class="actions">
+    <button class="submit primary" id="submitText">Submit catch returns</button>
+    <button class="submit images" id="submitImg">Submit catch returns with images</button>
+    <button class="reset" id="resetBtn">Reset month</button>
+  </div>
+
+  <details>
+    <summary>Season summary</summary>
+    <div id="seasonBody"></div>
+  </details>
+
+  <footer>
+    Returns are emailed to the club secretary. Your figures and guest figures are listed separately.<br>
+    Counts and photos are saved on this device only.
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var RECIPIENT = "markdfindlay64@gmail.com";
+
+  var SPECIES = [
+    {key:"brown",   name:"Brown trout",   sub:"Salmo trutta",        accent:"var(--brown)"},
+    {key:"rainbow", name:"Rainbow trout", sub:"Oncorhynchus mykiss", accent:"var(--rainbow)"}
+  ];
+
+  function fishSVG(){
+    return '<svg class="fish" viewBox="0 0 80 48" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">'
+      + '<path d="M6 24c10-13 30-18 44-12 6 2.6 11 6.6 14 12-3 5.4-8 9.4-14 12-14 6-34 1-44-12Z" fill="currentColor" opacity="0.9"/>'
+      + '<path d="M64 24l12-9v18l-12-9Z" fill="currentColor"/>'
+      + '<circle cx="22" cy="21" r="2.4" fill="#0d1a1d"/>'
+      + '</svg>';
+  }
+
+  // ---- Catch-data storage (localStorage) with migration ------------------
+  var KEY = "threipmuir-returns-v3";
+  var OLDER = ["threipmuir-returns-v2","threipmuir-returns-v1"];
+  var memStore = null;
+
+  function readKey(k){
+    try{ var r = localStorage.getItem(k); return r ? JSON.parse(r) : null; }
+    catch(e){ return null; }
+  }
+  function saveAll(obj){
+    memStore = obj;
+    try{ localStorage.setItem(KEY, JSON.stringify(obj)); }catch(e){}
+  }
+
+  function buildState(){
+    var cur = readKey(KEY) || memStore;
+    if(cur) return normalise(cur);
+    for(var i=0;i<OLDER.length;i++){ var o = readKey(OLDER[i]); if(o) return normalise(o); }
+    return {member:{name:"",no:""}, months:{}};
+  }
+  function normalise(src){
+    var out = {member:{name:(src.member&&src.member.name)||"", no:(src.member&&src.member.no)||""}, months:{}};
+    var months = src.months || {};
+    Object.keys(months).forEach(function(id){
+      var d = months[id] || {};
+      var nm = {brown:[], rainbow:[], guest:{brown:0,rainbow:0}, notes:d.notes||""};
+      ["brown","rainbow"].forEach(function(k){
+        if(Array.isArray(d[k])){
+          nm[k] = d[k].map(function(e){ return {fly:(e&&e.fly)||"", weight:(e&&e.weight)||""}; });
+        }else if(typeof d[k] === "number"){
+          for(var i=0;i<d[k];i++) nm[k].push({fly:"",weight:""});
+        }
+      });
+      if(d.guest){
+        nm.guest.brown   = parseInt(d.guest.brown,10)   || 0;
+        nm.guest.rainbow = parseInt(d.guest.rainbow,10) || 0;
+      }
+      out.months[id] = nm;
+    });
+    return out;
+  }
+
+  var state = buildState();
+
+  // ---- Photo storage (IndexedDB, with in-memory fallback) ----------------
+  var Photos = (function(){
+    var DBN = "threipmuir-photos", STORE = "photos";
+    var dbp = null, ok = true, mem = [];
+    try{ if(!window.indexedDB) ok = false; }catch(e){ ok = false; }
+
+    function open(){
+      if(dbp) return dbp;
+      dbp = new Promise(function(res,rej){
+        var rq = indexedDB.open(DBN,1);
+        rq.onupgradeneeded = function(e){
+          var d = e.target.result;
+          if(!d.objectStoreNames.contains(STORE)){
+            var os = d.createObjectStore(STORE,{keyPath:"id"});
+            os.createIndex("monthId","monthId",{unique:false});
+          }
+        };
+        rq.onsuccess = function(e){ res(e.target.result); };
+        rq.onerror   = function(e){ rej(e.target.error); };
+      });
+      return dbp;
+    }
+    return {
+      add: function(rec){
+        if(!ok){ mem.push(rec); return Promise.resolve(); }
+        return open().then(function(d){
+          return new Promise(function(res,rej){
+            var tx = d.transaction(STORE,"readwrite");
+            tx.objectStore(STORE).put(rec);
+            tx.oncomplete = function(){ res(); };
+            tx.onerror    = function(e){ rej(e.target.error); };
+          });
+        }).catch(function(){ ok = false; mem.push(rec); });
+      },
+      list: function(mid){
+        if(!ok){ return Promise.resolve(mem.filter(function(p){return p.monthId===mid;})); }
+        return open().then(function(d){
+          return new Promise(function(res,rej){
+            var out = [];
+            var idx = d.transaction(STORE,"readonly").objectStore(STORE).index("monthId");
+            var c = idx.openCursor(IDBKeyRange.only(mid));
+            c.onsuccess = function(e){
+              var cur = e.target.result;
+              if(cur){ out.push(cur.value); cur.continue(); }
+              else { out.sort(function(a,b){return a.added-b.added;}); res(out); }
+            };
+            c.onerror = function(e){ rej(e.target.error); };
+          });
+        }).catch(function(){ ok = false; return mem.filter(function(p){return p.monthId===mid;}); });
+      },
+      remove: function(id){
+        if(!ok){ mem = mem.filter(function(p){return p.id!==id;}); return Promise.resolve(); }
+        return open().then(function(d){
+          return new Promise(function(res,rej){
+            var tx = d.transaction(STORE,"readwrite");
+            tx.objectStore(STORE).delete(id);
+            tx.oncomplete = function(){ res(); };
+            tx.onerror    = function(e){ rej(e.target.error); };
+          });
+        }).catch(function(){ ok = false; mem = mem.filter(function(p){return p.id!==id;}); });
+      }
+    };
+  })();
+
+  var selected = {};            // photo id -> bool (selected for email)
+  var currentPhotos = [];       // photos for the visible month
+  var galleryUrls = [];         // object URLs to revoke on re-render
+
+  // ---- Month pointer ------------------------------------------------------
+  var now = new Date();
+  var view = {y:now.getFullYear(), m:now.getMonth()};
+  var MONTHS = ["January","February","March","April","May","June",
+                "July","August","September","October","November","December"];
+  function monthId(y,m){ return y + "-" + String(m+1).padStart(2,"0"); }
+  function getMonth(y,m){
+    var id = monthId(y,m);
+    if(!state.months[id]) state.months[id] = {brown:[], rainbow:[], guest:{brown:0,rainbow:0}, notes:""};
+    if(!state.months[id].guest) state.months[id].guest = {brown:0,rainbow:0};
+    return state.months[id];
+  }
+
+  // ---- DOM refs -----------------------------------------------------------
+  var cardsEl    = document.getElementById("cards");
+  var guestEl    = document.getElementById("guest");
+  var monthLabel = document.getElementById("monthLabel");
+  var yearLabel  = document.getElementById("yearLabel");
+  var totalEl    = document.getElementById("monthTotal");
+  var youTotalEl = document.getElementById("youTotal");
+  var guestTotalEl = document.getElementById("guestTotal");
+  var notesEl    = document.getElementById("notes");
+  var galleryEl  = document.getElementById("gallery");
+  var fileInput  = document.getElementById("fileInput");
+  var uploadBtn  = document.getElementById("uploadBtn");
+  var submitTextBtn = document.getElementById("submitText");
+  var submitImgBtn  = document.getElementById("submitImg");
+
+  // ---- Render -------------------------------------------------------------
+  function rowHTML(key, i, fish){
+    var fly = (fish.fly||"").replace(/"/g,"&quot;");
+    var wt  = (fish.weight||"").replace(/"/g,"&quot;");
+    return '<div class="row">' +
+      '<div class="idx">'+(i+1)+'</div>' +
+      '<input type="text" data-key="'+key+'" data-idx="'+i+'" data-field="fly" placeholder="Fly (optional)" value="'+fly+'">' +
+      '<input type="text" data-key="'+key+'" data-idx="'+i+'" data-field="weight" placeholder="Weight" value="'+wt+'">' +
+      '<button class="del" data-act="del" data-key="'+key+'" data-idx="'+i+'" aria-label="Remove fish '+(i+1)+'">&times;</button>' +
+    '</div>';
+  }
+
+  function render(){
+    monthLabel.textContent = MONTHS[view.m];
+    yearLabel.textContent  = view.y;
+    var data = getMonth(view.y, view.m);
+
+    var html = "";
+    SPECIES.forEach(function(sp){
+      var list = data[sp.key];
+      var rows = list.length
+        ? list.map(function(f,i){ return rowHTML(sp.key,i,f); }).join("")
+        : '<div class="empty">No '+sp.name.toLowerCase()+' logged yet.</div>';
+      html +=
+        '<div class="card" style="--accent:'+sp.accent+'">' +
+          '<div class="top">' + fishSVG() +
+            '<div><div class="name">'+sp.name+'</div><div class="sub">'+sp.sub+'</div></div>' +
+            '<div class="tally">'+list.length+'</div>' +
+          '</div>' +
+          '<div class="rows">'+rows+'</div>' +
+          '<button class="add" data-act="add" data-key="'+sp.key+'">+ Add '+sp.name.toLowerCase()+'</button>' +
+        '</div>';
+    });
+    cardsEl.innerHTML = html;
+
+    renderGuest();
+    notesEl.value = data.notes || "";
+    updateTotals();
+    renderSeason();
+    renderGallery();
+  }
+
+  function renderGuest(){
+    var data = getMonth(view.y, view.m);
+    guestEl.innerHTML = SPECIES.map(function(sp){
+      var n = data.guest[sp.key] || 0;
+      return '<div class="guestrow" style="--accent:'+sp.accent+'">' +
+        fishSVG() +
+        '<div><div class="gname">'+sp.name+'</div><div class="gsub">Guest catches</div></div>' +
+        '<div class="gstep">' +
+          '<button data-act="gminus" data-key="'+sp.key+'" aria-label="One fewer guest '+sp.name+'">−</button>' +
+          '<div class="gc" id="gc-'+sp.key+'">'+n+'</div>' +
+          '<button data-act="gplus" data-key="'+sp.key+'" aria-label="One more guest '+sp.name+'">+</button>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+  }
+
+  function updateTotals(){
+    var d = getMonth(view.y, view.m);
+    var you = d.brown.length + d.rainbow.length;
+    var g = (d.guest.brown||0) + (d.guest.rainbow||0);
+    youTotalEl.textContent = you;
+    guestTotalEl.textContent = g;
+    totalEl.textContent = you + g;
+  }
+
+  function renderSeason(){
+    var body = document.getElementById("seasonBody");
+    var you = {brown:0, rainbow:0}, g = {brown:0, rainbow:0}, grand = 0, months = 0;
+    Object.keys(state.months).forEach(function(id){
+      var d = state.months[id];
+      var yb = d.brown?d.brown.length:0, yr = d.rainbow?d.rainbow.length:0;
+      var gb = d.guest?(d.guest.brown||0):0, gr = d.guest?(d.guest.rainbow||0):0;
+      var sum = yb+yr+gb+gr;
+      if(sum>0) months++;
+      you.brown+=yb; you.rainbow+=yr; g.brown+=gb; g.rainbow+=gr; grand+=sum;
+    });
+    var html="";
+    SPECIES.forEach(function(sp){
+      var c = you[sp.key] + g[sp.key];
+      html += '<div class="seasonrow"><span>'+sp.name+'</span>' +
+              '<span class="v">'+c+' &nbsp;(you '+you[sp.key]+' · guests '+g[sp.key]+')</span></div>';
+    });
+    html += '<div class="seasonrow grand"><span>All fish ('+months+' month'+(months===1?"":"s")+')</span><span class="v">'+grand+'</span></div>';
+    body.innerHTML = html;
+  }
+
+  function renderGallery(){
+    var mid = monthId(view.y, view.m);
+    galleryUrls.forEach(function(u){ try{URL.revokeObjectURL(u);}catch(e){} });
+    galleryUrls = [];
+    Photos.list(mid).then(function(photos){
+      currentPhotos = photos;
+      if(!photos.length){
+        galleryEl.innerHTML = '<div class="empty">No photos added for this month yet.</div>';
+        updateImgBtn();
+        return;
+      }
+      galleryEl.innerHTML = photos.map(function(p){
+        if(!(p.id in selected)) selected[p.id] = true;
+        var url = URL.createObjectURL(p.blob);
+        galleryUrls.push(url);
+        return '<div class="thumb'+(selected[p.id]?' sel':'')+'" data-id="'+p.id+'">' +
+          '<img src="'+url+'" alt="catch photo">' +
+          '<div class="check">✓</div>' +
+          '<button class="thumbdel" data-del="'+p.id+'" aria-label="Delete photo">×</button>' +
+        '</div>';
+      }).join("");
+      updateImgBtn();
+    });
+  }
+
+  function updateImgBtn(){
+    var n = currentPhotos.filter(function(p){return selected[p.id];}).length;
+    submitImgBtn.textContent = "Submit catch returns with images" + (n ? " ("+n+")" : "");
+  }
+
+  // ---- Interactions: member rows -----------------------------------------
+  cardsEl.addEventListener("click", function(e){
+    var btn = e.target.closest("button");
+    if(!btn) return;
+    var act = btn.getAttribute("data-act");
+    var key = btn.getAttribute("data-key");
+    var data = getMonth(view.y, view.m);
+    if(act==="add"){
+      data[key].push({fly:"",weight:""});
+      saveAll(state); render();
+      if(navigator.vibrate) navigator.vibrate(8);
+    }else if(act==="del"){
+      var idx = parseInt(btn.getAttribute("data-idx"),10);
+      data[key].splice(idx,1);
+      saveAll(state); render();
+    }
+  });
+
+  cardsEl.addEventListener("input", function(e){
+    var el = e.target;
+    if(el.tagName!=="INPUT") return;
+    var key = el.getAttribute("data-key");
+    var idx = parseInt(el.getAttribute("data-idx"),10);
+    var field = el.getAttribute("data-field");
+    if(!key || isNaN(idx) || !field) return;
+    var data = getMonth(view.y, view.m);
+    if(data[key] && data[key][idx]){ data[key][idx][field] = el.value; saveAll(state); }
+  });
+
+  // ---- Interactions: guest steppers --------------------------------------
+  guestEl.addEventListener("click", function(e){
+    var btn = e.target.closest("button");
+    if(!btn) return;
+    var act = btn.getAttribute("data-act");
+    var key = btn.getAttribute("data-key");
+    if(!key) return;
+    var data = getMonth(view.y, view.m);
+    if(act==="gplus")       data.guest[key] = (data.guest[key]||0) + 1;
+    else if(act==="gminus") data.guest[key] = Math.max(0,(data.guest[key]||0) - 1);
+    else return;
+    saveAll(state);
+    var el = document.getElementById("gc-"+key);
+    if(el) el.textContent = data.guest[key];
+    updateTotals(); renderSeason();
+    if(navigator.vibrate) navigator.vibrate(6);
+  });
+
+  // ---- Interactions: photos ----------------------------------------------
+  uploadBtn.onclick = function(){ fileInput.click(); };
+
+  fileInput.addEventListener("change", async function(){
+    var files = Array.prototype.slice.call(fileInput.files || []);
+    if(!files.length) return;
+    var mid = monthId(view.y, view.m);
+    var added = 0;
+    for(var i=0;i<files.length;i++){
+      var f = files[i];
+      if(f.type && f.type.indexOf("image/")!==0) continue;
+      var rec = {
+        id: Date.now()+"-"+Math.random().toString(36).slice(2,8),
+        monthId: mid,
+        name: f.name || ("catch-"+Date.now()+".jpg"),
+        type: f.type || "image/jpeg",
+        blob: f,
+        added: Date.now()
+      };
+      selected[rec.id] = true;
+      await Photos.add(rec);
+      added++;
+    }
+    fileInput.value = "";
+    renderGallery();
+    if(added) toast(added+" photo"+(added===1?"":"s")+" added");
+  });
+
+  galleryEl.addEventListener("click", function(e){
+    var del = e.target.closest(".thumbdel");
+    if(del){
+      var id = del.getAttribute("data-del");
+      if(confirm("Delete this photo?")){
+        Photos.remove(id).then(function(){ delete selected[id]; renderGallery(); });
+      }
+      return;
+    }
+    var thumb = e.target.closest(".thumb");
+    if(!thumb) return;
+    var tid = thumb.getAttribute("data-id");
+    selected[tid] = !selected[tid];
+    thumb.classList.toggle("sel", !!selected[tid]);
+    updateImgBtn();
+  });
+
+  // ---- Month nav, notes, member fields -----------------------------------
+  document.getElementById("prevMonth").onclick = function(){ view.m--; if(view.m<0){view.m=11;view.y--;} render(); };
+  document.getElementById("nextMonth").onclick = function(){ view.m++; if(view.m>11){view.m=0;view.y++;} render(); };
+
+  notesEl.addEventListener("input", function(){ getMonth(view.y,view.m).notes = notesEl.value; saveAll(state); });
+
+  var nameEl=document.getElementById("memberName"), noEl=document.getElementById("memberNo");
+  nameEl.value=state.member.name; noEl.value=state.member.no;
+  nameEl.addEventListener("input", function(){ state.member.name=nameEl.value; saveAll(state); });
+  noEl.addEventListener("input",   function(){ state.member.no=noEl.value;     saveAll(state); });
+
+  document.getElementById("resetBtn").onclick = function(){
+    if(confirm("Reset all catches (yours and guests') for "+MONTHS[view.m]+" "+view.y+"? Photos are kept.")){
+      state.months[monthId(view.y,view.m)] = {brown:[], rainbow:[], guest:{brown:0,rainbow:0}, notes:""};
+      saveAll(state); render(); toast("Month reset");
+    }
+  };
+
+  // ---- Build the email ----------------------------------------------------
+  function describe(fish){
+    var parts=[];
+    if((fish.weight||"").trim()) parts.push(fish.weight.trim());
+    if((fish.fly||"").trim())    parts.push(fish.fly.trim());
+    return parts.join(" — ");
+  }
+  function buildSubject(){
+    var nm = (state.member.name||"").trim();
+    return "Catch Return — " + MONTHS[view.m] + " " + view.y + (nm ? " — " + nm : "");
+  }
+  function buildReturn(includeRecipient){
+    var data = getMonth(view.y, view.m);
+    var name = (state.member.name||"").trim() || "Member";
+    var youTotal = data.brown.length + data.rainbow.length;
+    var gb = data.guest.brown||0, gr = data.guest.rainbow||0, guestTotal = gb + gr;
+
+    var L = [];
+    L.push("Threipmuir Angling Club — Catch Return","");
+    if(includeRecipient) L.push("Email to: " + RECIPIENT, "");
+    L.push("Member: " + (state.member.name || "(name)"));
+    L.push("Membership no: " + (state.member.no || "(number)"));
+    L.push("Month: " + MONTHS[view.m] + " " + view.y, "");
+
+    L.push(name + " catch returns:");
+    SPECIES.forEach(function(sp){
+      var list = data[sp.key];
+      L.push("  " + sp.name + ": " + list.length);
+      var hasDetail = list.some(function(f){ return describe(f); });
+      if(hasDetail){
+        list.forEach(function(f,i){ L.push("     " + (i+1) + ". " + (describe(f) || "—")); });
+      }
+    });
+    L.push("  Subtotal: " + youTotal, "");
+
+    L.push("Guest catch returns:");
+    L.push("  Brown trout: " + gb);
+    L.push("  Rainbow trout: " + gr);
+    L.push("  Subtotal: " + guestTotal, "");
+
+    L.push("Combined total: " + (youTotal + guestTotal));
+    if((data.notes||"").trim()) L.push("", "Notes: " + data.notes.trim());
+    return L.join("\n");
+  }
+
+  function openMail(text){
+    window.location.href = "mailto:" + RECIPIENT +
+      "?subject=" + encodeURIComponent(buildSubject()) +
+      "&body=" + encodeURIComponent(text);
+  }
+
+  function downloadPhoto(p){
+    var url = URL.createObjectURL(p.blob);
+    var a = document.createElement("a");
+    a.href = url; a.download = p.name || ("catch-"+p.id+".jpg");
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function(){ try{URL.revokeObjectURL(url);}catch(e){} }, 1500);
+  }
+
+  // ---- Submit buttons -----------------------------------------------------
+  submitTextBtn.onclick = function(){
+    openMail(buildReturn(false));
+  };
+
+  submitImgBtn.onclick = async function(){
+    var sel = currentPhotos.filter(function(p){ return selected[p.id]; });
+    if(!sel.length){
+      toast("No photos selected — sending text only");
+      openMail(buildReturn(false));
+      return;
+    }
+    var files = sel.map(function(p){
+      return (p.blob instanceof File) ? p.blob
+        : new File([p.blob], p.name || "catch.jpg", {type:p.type || "image/jpeg"});
+    });
+    var text = buildReturn(true);
+    var subject = buildSubject();
+
+    if(navigator.canShare && navigator.canShare({files:files})){
+      try{
+        await navigator.share({title:subject, text:text, files:files});
+        return;
+      }catch(err){
+        if(err && err.name === "AbortError") return; // user cancelled the share sheet
+        // otherwise fall through to the download + mailto fallback
+      }
+    }
+
+    // Fallback (desktop / no file-share support): download photos + open email
+    sel.forEach(downloadPhoto);
+    toast(sel.length+" photo"+(sel.length===1?"":"s")+" downloaded — attach them to the email");
+    setTimeout(function(){ openMail(text); }, 700);
+  };
+
+  // ---- Toast --------------------------------------------------------------
+  var toastEl=document.getElementById("toast"), toastTimer;
+  function toast(msg){
+    toastEl.textContent=msg; toastEl.classList.add("show");
+    clearTimeout(toastTimer);
+    toastTimer=setTimeout(function(){ toastEl.classList.remove("show"); },2000);
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>
