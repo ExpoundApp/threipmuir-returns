@@ -42,6 +42,7 @@
   .member input::placeholder{color:var(--muted);}
   .member input:focus{outline:none;}
   .member .div{width:1px;align-self:stretch;background:var(--line);}
+  .member.recipient{margin-top:10px;}
 
   .monthnav{margin-top:16px;display:flex;align-items:center;justify-content:space-between;
     background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px;}
@@ -170,6 +171,10 @@
       <div class="div"></div>
       <input id="memberNo" type="text" placeholder="Membership no.">
     </div>
+    <div class="member recipient">
+      <input id="recipientEmail" type="email" inputmode="email" autocomplete="email"
+             placeholder="Club secretary's email — where returns are sent">
+    </div>
   </header>
 
   <div class="monthnav">
@@ -214,8 +219,8 @@
   </details>
 
   <footer>
-    Returns are emailed to the club secretary. Your figures and guest figures are listed separately.<br>
-    Counts and photos are saved on this device only.
+    Set the club secretary's email once at the top — it's saved on this device only.<br>
+    Your figures and guest figures are listed separately. Counts and photos are stored on this device.
   </footer>
 </div>
 
@@ -224,8 +229,6 @@
 <script>
 (function(){
   "use strict";
-
-  var RECIPIENT = "markdfindlay64@gmail.com";
 
   var SPECIES = [
     {key:"brown",   name:"Brown trout",   sub:"Salmo trutta",        accent:"var(--brown)"},
@@ -258,10 +261,10 @@
     var cur = readKey(KEY) || memStore;
     if(cur) return normalise(cur);
     for(var i=0;i<OLDER.length;i++){ var o = readKey(OLDER[i]); if(o) return normalise(o); }
-    return {member:{name:"",no:""}, months:{}};
+    return {member:{name:"",no:""}, recipient:"", months:{}};
   }
   function normalise(src){
-    var out = {member:{name:(src.member&&src.member.name)||"", no:(src.member&&src.member.no)||""}, months:{}};
+    var out = {member:{name:(src.member&&src.member.name)||"", no:(src.member&&src.member.no)||""}, recipient:(src.recipient||""), months:{}};
     var months = src.months || {};
     Object.keys(months).forEach(function(id){
       var d = months[id] || {};
@@ -601,6 +604,10 @@
   nameEl.addEventListener("input", function(){ state.member.name=nameEl.value; saveAll(state); });
   noEl.addEventListener("input",   function(){ state.member.no=noEl.value;     saveAll(state); });
 
+  var recipientEl=document.getElementById("recipientEmail");
+  recipientEl.value=state.recipient||"";
+  recipientEl.addEventListener("input", function(){ state.recipient=recipientEl.value; saveAll(state); });
+
   document.getElementById("resetBtn").onclick = function(){
     if(confirm("Reset all catches (yours and guests') for "+MONTHS[view.m]+" "+view.y+"? Photos are kept.")){
       state.months[monthId(view.y,view.m)] = {brown:[], rainbow:[], guest:{brown:0,rainbow:0}, notes:""};
@@ -615,6 +622,14 @@
     if((fish.fly||"").trim())    parts.push(fish.fly.trim());
     return parts.join(" — ");
   }
+  function getRecipient(){ return (state.recipient||"").trim(); }
+  function ensureRecipient(){
+    if(getRecipient()) return true;
+    toast("Add the club secretary's email at the top first");
+    var el=document.getElementById("recipientEmail");
+    if(el){ el.focus(); try{ el.scrollIntoView({behavior:"smooth",block:"center"}); }catch(e){} }
+    return false;
+  }
   function buildSubject(){
     var nm = (state.member.name||"").trim();
     return "Catch Return — " + MONTHS[view.m] + " " + view.y + (nm ? " — " + nm : "");
@@ -627,7 +642,7 @@
 
     var L = [];
     L.push("Threipmuir Angling Club — Catch Return","");
-    if(includeRecipient) L.push("Email to: " + RECIPIENT, "");
+    if(includeRecipient) L.push("Email to: " + getRecipient(), "");
     L.push("Member: " + (state.member.name || "(name)"));
     L.push("Membership no: " + (state.member.no || "(number)"));
     L.push("Month: " + MONTHS[view.m] + " " + view.y, "");
@@ -654,7 +669,7 @@
   }
 
   function openMail(text){
-    window.location.href = "mailto:" + RECIPIENT +
+    window.location.href = "mailto:" + encodeURIComponent(getRecipient()) +
       "?subject=" + encodeURIComponent(buildSubject()) +
       "&body=" + encodeURIComponent(text);
   }
@@ -669,10 +684,12 @@
 
   // ---- Submit buttons -----------------------------------------------------
   submitTextBtn.onclick = function(){
+    if(!ensureRecipient()) return;
     openMail(buildReturn(false));
   };
 
   submitImgBtn.onclick = async function(){
+    if(!ensureRecipient()) return;
     var sel = currentPhotos.filter(function(p){ return selected[p.id]; });
     if(!sel.length){
       toast("No photos selected — sending text only");
